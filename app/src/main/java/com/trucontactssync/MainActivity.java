@@ -54,6 +54,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -119,7 +120,10 @@ public class MainActivity extends AppCompatActivity {
                         dataSync.setColumnlist(cursor.getString(cursor.getColumnIndex("columnlist")));
                         dataSync.setKeynames(cursor.getString(cursor.getColumnIndex("keynames")));
                         dataSync.setSplfunction(cursor.getString(cursor.getColumnIndex("splfunction")));
-                        dataSync.setSessionid("");
+                        //sathish
+                        //dataSync.setSessionid("69FCEC30C24A");
+                        //mohan
+                        dataSync.setSessionid("7E3E8D875BBF");
                         dataSyncList.add(dataSync);
                     }
                 }
@@ -178,14 +182,14 @@ public class MainActivity extends AppCompatActivity {
                     if(dataSync.getUsercheck() == 0) {
                         AppLog.logString("Processing table :: "+dataSync.getDisplayname());
                         //do only pull
-                        makeRestCall(prevrecs);
+                        pullData(prevrecs);
                     } else {
                         //do push and pull
                         totalRecordToPush = getTotalRecordPriorPush();
                         if(totalRecordToPush > 0) {
-                            pushMetadata(totalRecordToPush);
+                            //pushMetadata(totalRecordToPush);
                         } else {
-                            makeRestCall(prevrecs);
+                            pullData(prevrecs);
                         }
                     }
                 }
@@ -263,10 +267,10 @@ public class MainActivity extends AppCompatActivity {
             return post;
         }
 
-        private void makeRestCall(int prevrecs) throws IOException, JSONException{
+        private void pullData(int prevrecs) throws IOException, JSONException{
             dataSync.setPrevrecs(prevrecs);
             dataSync.setPaginationrecs(paginationRecord);
-            dataSync.setOnebyonepush(true);
+            dataSync.setOnebyonepush(false);
             AppLog.logString("Pagination record started from : "+prevrecs+" to "+paginationRecord+" And Total Record to process: "+totalRecords);
             parseResult(restPost(constructPayload(dataSync)));
         }
@@ -320,13 +324,18 @@ public class MainActivity extends AppCompatActivity {
         private void parseResult(String result) throws IOException, JSONException{
             if(result != null) {
                 JSONObject response = new JSONObject(result);
-                float percentage;
+                float percentage = 0f;
                 if(dataSync.getOnebyonepush()) {
                     //assuming that this is pushed result. so there is no need to handle the result.
                     AppLog.logString("Pushed records to server: "+pushLimit);
                     AppLog.logString("Total record to push: "+totalRecordToPush);
-                    percentage = pushLimit * 100 / totalRecordToPush;
-                    publishProgress(pushLimit, (int)percentage);
+                    //calculate percentage only if there is an record
+                    if(totalRecordToPush > 0) {
+                        percentage = pushLimit * 50 / totalRecordToPush;
+                        publishProgress(pushLimit, (int)percentage);
+                    } else {
+                        publishProgress(pushLimit, 50);
+                    }
                 } else {
                     // this is the one going to handle pulled/fetched results to perform operation
                     // either insert or update the records
@@ -338,15 +347,19 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray jsonArray = new JSONArray(result);
                         float currentRow;
                         AppLog.logString("Total "+dataSync.getDisplayname()+" Length: "+jsonArray.length());
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            AppLog.logString("response jsonArray Loop :" + jsonArray.get(i));
-                            AppLog.logString("i value:"+i);
-                            currentRow = (i + 1);
-                            percentage = currentRow * 100 / this.totalRecords;
-                            insertOrUpdate((JSONObject)jsonArray.get(i));
-                            AppLog.logString("current row:"+(int) currentRow);
-                            AppLog.logString("percentage:"+percentage);
-                            publishProgress((int)currentRow, (int) percentage);
+                        if(jsonArray.length() > 0) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                AppLog.logString("response jsonArray Loop :" + jsonArray.get(i));
+                                AppLog.logString("i value:"+i);
+                                currentRow = (i + 1);
+                                percentage = currentRow * 50 / this.totalRecords;
+                                insertOrUpdate((JSONObject)jsonArray.get(i));
+                                AppLog.logString("current row:"+(int) currentRow);
+                                AppLog.logString("percentage:"+percentage);
+                                publishProgress((int)currentRow, (int) percentage);
+                            }
+                        } else {
+                            publishProgress(totalRecords, 50);
                         }
                         //assume that we fetched all the records in a single http request for non-transaction
                         //table e.g., country, state and address_type etc. so there is no reason to fetch again
@@ -354,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
                             if(totalRecords > (prevrecs + paginationRecord)) {
                                 prevrecs = paginationRecord;
                                 paginationRecord += paginationRecord;
-                                makeRestCall(prevrecs);
+                                pullData(prevrecs);
                             }
                         }
                     }
@@ -367,16 +380,42 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String objectId = object.getString("objectId");
 
+                //put row data value which is not match both default and keyname
+                List<String> excludeRowDatacolumns = new ArrayList<>();
+                excludeRowDatacolumns.add("objectId");
+                excludeRowDatacolumns.add("updatedAt");
+                excludeRowDatacolumns.add("isdeleted");
+
                 //insert or Update content values
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("updatedAt", object.getString("updatedAt"));
                 JSONObject jsonObject = new JSONObject();
-                String[] columnNameList = dataSync.getColumnlist().split(",");
-                for(String columnName : columnNameList) {
-                    jsonObject.put(columnName, object.getString(columnName));
+                if(dataSync.getKeynames() != null) {
+                    String[] keyNames = dataSync.getKeynames().split(",");
+                    for(String key : keyNames) {
+                        jsonObject.put(key, object.getString(key));
+                        excludeRowDatacolumns.add(key);
+                    }
                 }
-                contentValues.put("rowdata", jsonObject.toString());
-                //contentValues.put("isdeleted", false);
+
+                //set row data
+                JSONObject rowData = new JSONObject();
+                Iterator<String> keys = object.keys();
+                boolean hasExcludedColumn = false;
+                while(keys.hasNext()){
+                    hasExcludedColumn = false;
+                    String key = keys.next();
+                    for(String column : excludeRowDatacolumns) {
+                        if(column.equals(key)) {
+                            hasExcludedColumn = true;
+                            break;
+                        }
+                    }
+                    if(!hasExcludedColumn) {
+                        rowData.put(key, object.getString(key));
+                    }
+                }
+                jsonObject.put("rowdata", rowData);
 
                 String sql = "select * from "+dataSync.getTablename()+" where objectId ='"+objectId+"'";
                 cursor = db.rawQuery(sql,null);
@@ -404,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
             int totalRecordPush = 0;
             try {
                 cursor = getCursor("count(*)");
-                if(cursor.getCount() > 0) {
+                while(cursor.moveToNext()) {
                     totalRecordPush = cursor.getInt(0);
                 }
             } catch (Exception e) {
@@ -482,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         public Cursor getCursor(String selectQuery, int limit, int offset) {
-            String sql = "select "+selectQuery+" from "+dataSync.getTablename()+" where updatedAt >= ? AND userId = ?";
+            String sql = "select "+selectQuery+" from "+dataSync.getTablename()+" where updatedAt >= ? OR userid = ?";
             if(limit != 0 & offset != 0) {
                 sql = sql+" LIMIT "+limit+" OFFSET "+offset;
             }
@@ -490,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public Cursor getCursor(String selectQuery) {
-            return executeQuery("select "+selectQuery+" from "+dataSync.getTablename()+" where updatedAt >= ? AND userId = ?");
+            return executeQuery("select "+selectQuery+" from "+dataSync.getTablename()+" where updatedAt >= ? OR userid = ?");
         }
 
         private Cursor executeQuery(String sqlQuery) {

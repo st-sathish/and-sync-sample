@@ -1,41 +1,26 @@
 package com.trucontactssync;
 
-import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Messenger;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.trucontactssync.common.AppLog;
 import com.trucontactssync.common.Constants;
-import com.trucontactssync.common.ErrorResponse;
-import com.trucontactssync.common.util.NetworkUtil;
-import com.trucontactssync.common.util.TruContactsUtility;
-import com.trucontactssync.database.DatabaseHelper;
-import com.trucontactssync.intentservices.SyncIntentService;
 import com.trucontactssync.managers.DatabaseManager;
-import com.trucontactssync.managers.GetCountryManager;
-import com.trucontactssync.managers.PreferenceManager;
-import com.trucontactssync.model.Country;
 import com.trucontactssync.model.DataSync;
 import com.trucontactssync.network.NetworkConstants;
-import com.trucontactssync.network.NetworkDelegate;
 import com.trucontactssync.network.NetworkLogger;
-import com.trucontactssync.networkprovider.DataSyncProvider;
 import com.trucontactssync.utils.MathUtils;
 
 import org.json.JSONArray;
@@ -50,7 +35,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -119,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         dataSync.setColumnlist(cursor.getString(cursor.getColumnIndex("columnlist")));
                         dataSync.setKeynames(cursor.getString(cursor.getColumnIndex("keynames")));
                         dataSync.setSplfunction(cursor.getString(cursor.getColumnIndex("splfunction")));
-                        dataSync.setSessionid("");
+                        dataSync.setSessionid("6CF7FCCF82B6");
                         dataSyncList.add(dataSync);
                     }
                 }

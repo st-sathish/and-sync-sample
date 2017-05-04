@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class SyncDBAsyncTaskMain extends AsyncTask<Object, Integer, Void> {
+    private  class SyncDBAsyncTaskMain extends AsyncTask<Object, Integer, Void> {
 
         private int prevrecs;
         private int paginationRecord;
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void initialize() {
             prevrecs = 0;
-            paginationRecord = 50;
+            paginationRecord = 200;
             totalRecords = 0;
         }
 

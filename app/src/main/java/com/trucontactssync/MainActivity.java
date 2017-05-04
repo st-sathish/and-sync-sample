@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         dataSync.setColumnlist(cursor.getString(cursor.getColumnIndex("columnlist")));
                         dataSync.setKeynames(cursor.getString(cursor.getColumnIndex("keynames")));
                         dataSync.setSplfunction(cursor.getString(cursor.getColumnIndex("splfunction")));
-                        dataSync.setSessionid("6CF7FCCF82B6");
+                        dataSync.setSessionid("7E3E8D875BBF");
                         dataSyncList.add(dataSync);
                     }
                 }

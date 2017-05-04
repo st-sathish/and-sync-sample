@@ -104,12 +104,10 @@ public class MainActivity extends AppCompatActivity {
                         dataSync.setColumnlist(cursor.getString(cursor.getColumnIndex("columnlist")));
                         dataSync.setKeynames(cursor.getString(cursor.getColumnIndex("keynames")));
                         dataSync.setSplfunction(cursor.getString(cursor.getColumnIndex("splfunction")));
-<<<<<<< HEAD
-=======
+
                         //sathish
                         //dataSync.setSessionid("69FCEC30C24A");
                         //mohan
->>>>>>> ba2261a79ba9454ab365ab688de6c80d6d5ed5df
                         dataSync.setSessionid("7E3E8D875BBF");
                         dataSyncList.add(dataSync);
                     }
@@ -163,20 +161,23 @@ public class MainActivity extends AppCompatActivity {
             List<DataSync> list = (List<DataSync>) params[0];
             try {
                 for(DataSync dataSync : list) {
-                    initialize();
-                    this.dataSync = dataSync;
-                    currentDataSyncTable(dataSync.getId());
-                    if(dataSync.getUsercheck() == 0) {
-                        AppLog.logString("Processing table :: "+dataSync.getDisplayname());
-                        //do only pull
-                        pullData(prevrecs);
-                    } else {
-                        //do push and pull
-                        totalRecordToPush = getTotalRecordPriorPush();
-                        if(totalRecordToPush > 0) {
-                            //pushMetadata(totalRecordToPush);
-                        } else {
+                    if(dataSync.getDisplayname().equals("vCard Titles")) {
+                        initialize();
+                        this.dataSync = dataSync;
+                        currentDataSyncTable(dataSync.getId());
+                        if(dataSync.getUsercheck() == 0) {
+                            AppLog.logString("Processing table :: "+dataSync.getDisplayname());
+                            //do only pull
                             pullData(prevrecs);
+                        } else {
+                            //do push and pull
+                            totalRecordToPush = getTotalRecordPriorPush();
+                            if(totalRecordToPush > 0) {
+                                pushMetadata(totalRecordToPush);
+                            }
+                            else {
+                                pullData(prevrecs);
+                            }
                         }
                     }
                 }
@@ -210,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
             mSyncDbPull.setText(currentRow);
             AppLog.logString("Helloooooooooooooo Tag: "+dataSync.getDisplayname());
             AppLog.logString("Helloooooooooooooo: "+mSyncDbPull.getText());
-            mSyncDbPush.setText("");
+            if(values.length == 3)
+                mSyncDbPush.setText(String.valueOf(values[2]));
         }
 
         @Override
@@ -345,8 +347,11 @@ public class MainActivity extends AppCompatActivity {
                                 AppLog.logString("percentage:"+percentage);
                                 publishProgress((int)currentRow, (int) percentage);
                             }
+                            if(dataSync.getUsercheck() == 0) {
+                                publishProgress(totalRecords, 50, 0);
+                            }
                         } else {
-                            publishProgress(totalRecords, 50);
+                            publishProgress(totalRecords, 50, 0);
                         }
                         //assume that we fetched all the records in a single http request for non-transaction
                         //table e.g., country, state and address_type etc. so there is no reason to fetch again

@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         ProgressBar mProgressBar;
         SQLiteDatabase db;
         int totalRecordToPush = 0;
+        float currentRow;
 
         public SyncDBAsyncTaskMain(LinearLayout syncTableLayout) {
             this.syncTableLayout = syncTableLayout;
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSync dataSync : list) {
                     if(dataSync.getDisplayname().equals("vCard Titles")) {
                         initialize();
+                        this.currentRow = 0;
                         this.dataSync = dataSync;
                         currentDataSyncTable(dataSync.getId());
                         if(dataSync.getUsercheck() == 0) {
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
         private void initialize() {
             prevrecs = 0;
-            paginationRecord = 200;
+            paginationRecord = 50;
             totalRecords = 0;
         }
 
@@ -334,13 +336,13 @@ public class MainActivity extends AppCompatActivity {
                     if(response.has(Constants.KEY_RESULT)) {
                         result = response.getString(Constants.KEY_RESULT);
                         JSONArray jsonArray = new JSONArray(result);
-                        float currentRow;
+
                         AppLog.logString("Total "+dataSync.getDisplayname()+" Length: "+jsonArray.length());
                         if(jsonArray.length() > 0) {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 AppLog.logString("response jsonArray Loop :" + jsonArray.get(i));
                                 AppLog.logString("i value:"+i);
-                                currentRow = (i + 1);
+                                currentRow += (i + 1);
                                 percentage = currentRow * 50 / this.totalRecords;
                                 insertOrUpdate((JSONObject)jsonArray.get(i));
                                 AppLog.logString("current row:"+(int) currentRow);
@@ -356,9 +358,9 @@ public class MainActivity extends AppCompatActivity {
                         //assume that we fetched all the records in a single http request for non-transaction
                         //table e.g., country, state and address_type etc. so there is no reason to fetch again
                         if(dataSync.getUsercheck() != 0) {
-                            if(totalRecords > (prevrecs + paginationRecord)) {
-                                prevrecs = paginationRecord;
-                                paginationRecord += paginationRecord;
+                            if(totalRecords > (prevrecs )) {
+                                prevrecs = paginationRecord + prevrecs;
+                                //paginationRecord = 50 + paginationRecord;
                                 pullData(prevrecs);
                             }
                         }
@@ -479,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         int offset = 1;
-        int pushLimit = 200;
+        int pushLimit = 50;
         public void pushMetadata(int totalRecordToPush) {
             try {
                 if(totalRecordToPush <= pushLimit) {

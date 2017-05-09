@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.trucontactssync.datasync.DataSyncManager.API_ACTION_NAME;
+
 /**
  * Created by CS39 on 5/7/2017.
  */
@@ -62,7 +64,8 @@ public class DataSyncPullAsyncTask extends AsyncTask<Object, Integer, Void> {
         dataSync.setPaginationrecs(paginationRecord);
         dataSync.setOnebyonepush(false);
         AppLog.logString("Pagination record started from : "+prevrecs+" to "+paginationRecord+" And Total Record to process: "+totalRecords);
-        RestPost restPost = new RestPost("getsyncdata", DataSyncUtils.constructPayload(dataSync));
+        RestPost restPost = new RestPost(API_ACTION_NAME
+                , DataSyncUtils.constructPayload(dataSync));
         parseResult(restPost.restPost(DataSyncUtils.constructPayload(dataSync)));
     }
 
@@ -84,7 +87,7 @@ public class DataSyncPullAsyncTask extends AsyncTask<Object, Integer, Void> {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         AppLog.logString("response jsonArray Loop :" + jsonArray.get(i));
                         AppLog.logString("i value:"+i);
-                        currentRow += (i + 1);
+                        currentRow += 1;
                         percentage = currentRow * 50 / this.totalRecords;
                         insertOrUpdate((JSONObject)jsonArray.get(i));
                         AppLog.logString("current row:"+(int) currentRow);
@@ -167,7 +170,7 @@ public class DataSyncPullAsyncTask extends AsyncTask<Object, Integer, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-
+        this.dataSyncManager.onDataSyncPullCompleted();
     }
 
 }

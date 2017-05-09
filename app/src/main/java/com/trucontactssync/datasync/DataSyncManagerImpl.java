@@ -4,9 +4,6 @@ import com.trucontactssync.common.AppLog;
 import com.trucontactssync.datasync.presenter.DataSyncPresenter;
 import com.trucontactssync.model.DataSync;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
 
 /**
@@ -17,33 +14,63 @@ public class DataSyncManagerImpl implements DataSyncManager {
 
     List<DataSync> dataSyncs;
     DataSyncPresenter dataSyncPresenter;
+    DataSync dataSync;
+    private int dataSyncIndex = 0;
+    private DataSyncPushAsyncTask dataSyncPushAsyncTask = null;
+    private DataSyncPullAsyncTask dataSyncPullAsyncTask = null;
 
     public DataSyncManagerImpl(List<DataSync> dataSyncs, DataSyncPresenter dataSyncPresenter) {
         this.dataSyncs = dataSyncs;
         this.dataSyncPresenter = dataSyncPresenter;
-        DataSync dataSync = dataSyncs.get(0);
-        if(dataSync.getUsercheck() == 0) {
-            AppLog.logString("Processing table :: "+dataSync.getDisplayname());
-            //do only pull
-            pullDataSync(dataSync);
-        } else {
-            //pushDataSync(dataSync);
-        }
+        dataSync = dataSyncs.get(dataSyncIndex);
+        goNext();
     }
 
     private void pushDataSync(DataSync dataSync) {
-        DataSyncPushAsyncTask dataSyncPushAsyncTask = new DataSyncPushAsyncTask(this);
+        if(dataSyncPushAsyncTask == null)
+            dataSyncPushAsyncTask = new DataSyncPushAsyncTask(this);
         dataSyncPushAsyncTask.execute(dataSync);
     }
 
     private void pullDataSync(DataSync dataSync) {
-        DataSyncPullAsyncTask dataSyncPullAsyncTask = new DataSyncPullAsyncTask(this);
+        if(dataSyncPullAsyncTask == null)
+            dataSyncPullAsyncTask = new DataSyncPullAsyncTask(this);
         dataSyncPullAsyncTask.execute(dataSync);
+    }
+
+    /**
+     * Go DataSync one by one
+     */
+    private void goNext() {
+        if(dataSync.getUsercheck() == 0) {
+            AppLog.logString("Processing table :: "+dataSync.getDisplayname());
+            dataSyncPresenter.onPushUpdateProgress(dataSync, "0", 50);
+            //do only pull
+            pullDataSync(dataSync);
+        } else {
+            pushDataSync(dataSync);
+        }
+    }
+
+    @Override
+    public void onDataSyncPushCompleted() {
+        pullDataSync(dataSync);
+    }
+
+    @Override
+    public void onDataSyncPullCompleted() {
+        if(dataSyncIndex <= dataSyncs.size()) {
+            dataSyncIndex += 1;
+            this.dataSync = dataSyncs.get(dataSyncIndex);
+            //goNext();
+        } else {
+            //callback function to inform presenter that all the push & pull has been completed
+        }
     }
 
     @Override
     public void publishPushProgress(DataSync dataSync, String recordNumber, int percentage) {
-
+        dataSyncPresenter.onPushUpdateProgress(dataSync, recordNumber, percentage);
     }
 
     @Override

@@ -49,15 +49,19 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
 
     @Override
     public void updatePushColumn(DataSync dataSync, String recordCount, int percentage) {
-
+        updatePushPullColumn(dataSync, recordCount, percentage, R.id.syncDbPush);
     }
 
     @Override
     public void updatePullColumn(DataSync dataSync, String recordCount, int percentage) {
+        updatePushPullColumn(dataSync, recordCount, percentage, R.id.syncDbPull);
+    }
+
+    private void updatePushPullColumn(DataSync dataSync,String recordCount, int percentage, int pullOrPushId) {
         View view = currentDataSyncTable(dataSync.getId());
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.loading);
         progressBar.setProgress(percentage);
-        TextView textView = (TextView)view.findViewById(R.id.syncDbPull);
+        TextView textView = (TextView)view.findViewById(pullOrPushId);
         textView.setText(recordCount);
     }
 

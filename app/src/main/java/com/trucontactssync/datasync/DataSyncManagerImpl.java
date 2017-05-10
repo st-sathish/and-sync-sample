@@ -27,13 +27,13 @@ public class DataSyncManagerImpl implements DataSyncManager {
     }
 
     private void pushDataSync(DataSync dataSync) {
-        if(dataSyncPushAsyncTask == null)
+        //if(dataSyncPushAsyncTask == null)
             dataSyncPushAsyncTask = new DataSyncPushAsyncTask(this);
         dataSyncPushAsyncTask.execute(dataSync);
     }
 
     private void pullDataSync(DataSync dataSync) {
-        if(dataSyncPullAsyncTask == null)
+        //if(dataSyncPullAsyncTask == null)
             dataSyncPullAsyncTask = new DataSyncPullAsyncTask(this);
         dataSyncPullAsyncTask.execute(dataSync);
     }
@@ -59,8 +59,8 @@ public class DataSyncManagerImpl implements DataSyncManager {
 
     @Override
     public void onDataSyncPullCompleted() {
+        dataSyncIndex += 1;
         if(dataSyncIndex <= dataSyncs.size()) {
-            dataSyncIndex += 1;
             this.dataSync = dataSyncs.get(dataSyncIndex);
             //goNext();
         } else {

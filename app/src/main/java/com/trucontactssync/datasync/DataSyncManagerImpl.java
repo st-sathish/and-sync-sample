@@ -61,7 +61,7 @@ public class DataSyncManagerImpl implements DataSyncManager {
         dataSyncIndex += 1;
         if(dataSyncIndex < dataSyncs.size()) {
             this.dataSync = dataSyncs.get(dataSyncIndex);
-            //goNext();
+            goNext();
         } else {
             //callback function to inform presenter that all the push & pull has been completed
         }

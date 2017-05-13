@@ -1,6 +1,5 @@
 package com.trucontactssync.datasync;
 
-import com.trucontactssync.common.AppLog;
 import com.trucontactssync.datasync.presenter.DataSyncPresenter;
 import com.trucontactssync.model.DataSync;
 
@@ -15,7 +14,7 @@ public class DataSyncManagerImpl implements DataSyncManager {
     List<DataSync> dataSyncs;
     DataSyncPresenter dataSyncPresenter;
     DataSync dataSync;
-    private int dataSyncIndex = 0;
+    private int dataSyncIndex = 18;
     private DataSyncPushAsyncTask dataSyncPushAsyncTask = null;
     private DataSyncPullAsyncTask dataSyncPullAsyncTask = null;
 
@@ -42,14 +41,14 @@ public class DataSyncManagerImpl implements DataSyncManager {
      * Go DataSync one by one
      */
     private void goNext() {
-        if(dataSync.getUsercheck() == 0) {
-            AppLog.logString("Processing table :: "+dataSync.getDisplayname());
-            dataSyncPresenter.onPushUpdateProgress(dataSync, "0", 50);
-            //do only pull
-            pullDataSync(dataSync);
-        } else {
+//        if(dataSync.getUsercheck() == 0) {
+//            AppLog.logString("Processing table :: "+dataSync.getDisplayname());
+//            //dataSyncPresenter.onPushUpdateProgress(dataSync, "0", 50);
+//            //do only pull
+//            pullDataSync(dataSync);
+//        } else {
             pushDataSync(dataSync);
-        }
+//        }
     }
 
     @Override
@@ -60,7 +59,7 @@ public class DataSyncManagerImpl implements DataSyncManager {
     @Override
     public void onDataSyncPullCompleted() {
         dataSyncIndex += 1;
-        if(dataSyncIndex <= dataSyncs.size()) {
+        if(dataSyncIndex < dataSyncs.size()) {
             this.dataSync = dataSyncs.get(dataSyncIndex);
             //goNext();
         } else {

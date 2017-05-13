@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
 import com.trucontactssync.common.AppLog;
-import com.trucontactssync.common.Constants;
 import com.trucontactssync.datasync.utils.DataSyncUtils;
 import com.trucontactssync.http.RestPost;
 import com.trucontactssync.managers.DatabaseManager;
@@ -17,7 +16,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by CS39 on 5/7/2017.
@@ -40,13 +38,20 @@ public class DataSyncPushAsyncTask extends AsyncTask<Object, Integer, Void> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        this.dataSyncManager.publishPullProgress(dataSync, String.valueOf(values[0]), values[1]);
+        this.dataSyncManager.publishPushProgress(dataSync, String.valueOf(values[0]), values[1]);
     }
 
     @Override
     protected Void doInBackground(Object... objects) {
+
+
         this.dataSync = (DataSync) objects[0];
         try {
+            if (dataSync.getUsercheck() == 0) {
+                publishProgress(0,50);
+                return null;
+            }
+
             //do push and pull
             totalRecordToPush = getTotalRecordPriorPush();
             if(totalRecordToPush > 0) {

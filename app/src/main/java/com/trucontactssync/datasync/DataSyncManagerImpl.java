@@ -14,7 +14,7 @@ public class DataSyncManagerImpl implements DataSyncManager {
     List<DataSync> dataSyncs;
     DataSyncPresenter dataSyncPresenter;
     DataSync dataSync;
-    private int dataSyncIndex = 18;
+    private int dataSyncIndex = 0;
     private DataSyncPushAsyncTask dataSyncPushAsyncTask = null;
     private DataSyncPullAsyncTask dataSyncPullAsyncTask = null;
 

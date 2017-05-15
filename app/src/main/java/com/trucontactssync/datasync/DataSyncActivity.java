@@ -1,8 +1,7 @@
 package com.trucontactssync.datasync;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,6 +22,8 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
     ProgressBar mProgressBar = null;
     LinearLayout mSyncDbParentLayout = null;
     DataSyncPresenter mDataSyncPresenter = null;
+    int getProgressBar ,value;
+    int progress = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,17 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
     private void updatePushPullColumn(DataSync dataSync,String recordCount, int percentage, int pullOrPushId) {
         View view = currentDataSyncTable(dataSync.getId());
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.loading);
-        progressBar.setProgress(percentage);
         TextView textView = (TextView)view.findViewById(pullOrPushId);
-        textView.setText(recordCount);
+        if(recordCount .equals("0")){
+            progressBar.setProgress(progress);
+            textView.setText(recordCount);
+        }
+        else{
+            getProgressBar = progressBar.getProgress();
+            value = getProgressBar + percentage;
+            progressBar.setProgress(value);
+            textView.setText(recordCount);
+        }
     }
 
     public View currentDataSyncTable(Integer id) {

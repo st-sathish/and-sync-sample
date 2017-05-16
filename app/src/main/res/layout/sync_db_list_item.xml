@@ -42,6 +42,52 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/layoutRightSync"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"
+                android:padding="5dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/syncDbRightImg"
+                    android:layout_gravity="center"
+                    android:src="@drawable/up_arrow"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":"
+                    android:id="@+id/rightcolon"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/syncDbPush"
+                    android:layout_gravity="center"
+                    android:textSize="17sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginLeft="5dp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#FF424242"
+                android:layout_marginLeft="1dp"
+                android:layout_marginRight="1dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/layoutLeftSync"
                 android:layout_weight="1"
                 android:layout_marginRight="5dp"
@@ -77,51 +123,6 @@
                     android:layout_marginLeft="5dp"/>
 
                 </LinearLayout>
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="#FF424242"
-                android:layout_marginLeft="1dp"
-                android:layout_marginRight="1dp"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/layoutRightSync"
-                android:layout_weight="1"
-                android:layout_marginRight="5dp"
-                android:padding="5dp"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:id="@+id/syncDbRightImg"
-                    android:layout_gravity="center"
-                    android:src="@drawable/up_arrow"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rightcolon"
-                    android:layout_gravity="center"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginLeft="5dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/syncDbPush"
-                    android:layout_gravity="center"
-                    android:textSize="17sp"
-                    android:textColor="@android:color/black"
-                    android:layout_marginLeft="5dp"/>
-
-            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

@@ -22,8 +22,6 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
     ProgressBar mProgressBar = null;
     LinearLayout mSyncDbParentLayout = null;
     DataSyncPresenter mDataSyncPresenter = null;
-    int getProgressBar ,value;
-    int progress = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +60,14 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
         View view = currentDataSyncTable(dataSync.getId());
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.loading);
         TextView textView = (TextView)view.findViewById(pullOrPushId);
-        if(recordCount .equals("0")){
-            progressBar.setProgress(progress);
-            textView.setText(recordCount);
+        textView.setText(recordCount);
+        /*if(recordCount.equals("0")){
+            progressBar.setProgress(50);
         }
         else{
-            getProgressBar = progressBar.getProgress();
-            value = getProgressBar + percentage;
-            progressBar.setProgress(value);
-            textView.setText(recordCount);
-        }
+            progressBar.setProgress((progressBar.getProgress() + percentage));
+        }*/
+        progressBar.setProgress((progressBar.getProgress() + percentage));
     }
 
     public View currentDataSyncTable(Integer id) {

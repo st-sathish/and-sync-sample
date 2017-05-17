@@ -88,7 +88,7 @@ public class DataSyncPullAsyncTask extends AsyncTask<Object, Integer, Void> {
                         AppLog.logString("response jsonArray Loop :" + jsonArray.get(i));
                         AppLog.logString("i value:"+i);
                         currentRow += 1;
-                        percentage = currentRow * 50 / this.totalRecords;
+                        percentage = 50+ currentRow / this.totalRecords * 50;
                         insertOrUpdate((JSONObject)jsonArray.get(i));
                         AppLog.logString("current row:"+(int) currentRow);
                         AppLog.logString("percentage:"+percentage);

@@ -67,7 +67,7 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
         else{
             progressBar.setProgress((progressBar.getProgress() + percentage));
         }*/
-        progressBar.setProgress((progressBar.getProgress() + percentage));
+        progressBar.setProgress(percentage);
     }
 
     public View currentDataSyncTable(Integer id) {

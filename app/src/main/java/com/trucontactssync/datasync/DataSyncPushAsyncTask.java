@@ -158,7 +158,7 @@ public class DataSyncPushAsyncTask extends AsyncTask<Object, Integer, Void> {
             AppLog.logString("Total record to push: "+totalRecordToPush);
             //calculate percentage only if there is an record
             //if(totalRecordToPush > 0) {
-                percentage = pushLimit * 50 / totalRecordToPush;
+                percentage = pushLimit  / totalRecordToPush * 50/100;
                 publishProgress(totalRecordToPush, (int)percentage);
             //} else {
                 //publishProgress(pushLimit, 50);

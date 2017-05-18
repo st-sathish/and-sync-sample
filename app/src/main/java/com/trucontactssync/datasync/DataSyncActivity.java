@@ -60,14 +60,16 @@ public class DataSyncActivity extends AppCompatActivity implements DataSyncView 
         View view = currentDataSyncTable(dataSync.getId());
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.loading);
         TextView textView = (TextView)view.findViewById(pullOrPushId);
-        textView.setText(recordCount);
-        /*if(recordCount.equals("0")){
-            progressBar.setProgress(50);
+
+
+        if (recordCount.equals("0")){
+            progressBar.setProgress(0);
+            textView.setText(recordCount);
+        }else{
+            progressBar.setProgress(percentage);
+            textView.setText(recordCount);
         }
-        else{
-            progressBar.setProgress((progressBar.getProgress() + percentage));
-        }*/
-        progressBar.setProgress(percentage);
+
     }
 
     public View currentDataSyncTable(Integer id) {
